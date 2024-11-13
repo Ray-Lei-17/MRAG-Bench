@@ -102,10 +102,17 @@ if __name__ == "__main__":
     parser.add_argument("--test_size", type=int, default=10000000)
     ############# added for mrag benchmark ####################
     parser.add_argument("--answers-file", type=str, default="answer.jsonl")
-    parser.add_argument("--use_rag", type=lambda x: x.lower() == 'true', default=False, help="Use RAG")
-    parser.add_argument("--use_retrieved_examples", type=lambda x: x.lower() == 'true', default=False, help="Use retrieved examples")
+    parser.add_argument("--use-rag", type=lambda x: x.lower() == 'true', default=False, help="Use RAG")
+    parser.add_argument("--use-retrieved-examples", type=lambda x: x.lower() == 'true', default=False, help="Use retrieved examples")
+    parser.add_argument("--use-mix-examples", type=lambda x: x.lower() == 'true', default=False, help="Use mixed examples")
+    parser.add_argument("--gt-first", type=lambda x: x.lower() == 'true', default=False, help="Use mixed examples (Ground Truth First)")
+    parser.add_argument("--shuffle-mix", type=lambda x: x.lower() == 'true', default=False, help="Shuffle examples")
+    parser.add_argument("--gt-num", type=int, default=1, help="Number of Ground Truth")
+    parser.add_argument("--retrieval-order", nargs='+', type=int, default=[0,1,2,3,4], help="Order of the Retieval data")
 
     args = parser.parse_args()
-
+    # print(args.retrieval_order)
+    
+    print(args)
     eval_model(args)
 

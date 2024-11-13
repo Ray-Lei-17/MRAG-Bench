@@ -5,6 +5,7 @@ import io
 from PIL import Image
 from tqdm.auto import tqdm
 from datasets import load_dataset
+from random import shuffle
 
 def bench_data_loader(args, image_placeholder="<image>"):
     """ 
@@ -52,13 +53,36 @@ def bench_data_loader(args, image_placeholder="<image>"):
         prompt_instruction_part = prompt
         qs = prompt + qs
         
-        if args.use_rag: 
+        if args.use_rag:
             if args.use_retrieved_examples:
                 retrieved_images = item['retrieved_images']
                 retrieved_images = [ib.convert("RGB") if isinstance(ib, Image.Image) else Image.open(io.BytesIO(ib['bytes'])).convert("RGB") for ib in retrieved_images]
+
+                if args.use_mix_examples:
+                    gt_num = args.gt_num
+                    gt_images = item['gt_images']
+                    gt_images = [ib.convert("RGB") if isinstance(ib, Image.Image) else Image.open(io.BytesIO(ib['bytes'])).convert("RGB") for ib in gt_images]
+                    not_true_image = [i for i in retrieved_images if i not in gt_images[:gt_num]]
+
+                    if args.gt_first:
+                        auxiliary_images = gt_images[:gt_num] + not_true_image[:5-gt_num]
+                    else:
+                        auxiliary_images = not_true_image[:5-gt_num] + gt_images[:gt_num]
+
+                    if args.shuffle_mix:
+                        shuffle(auxiliary_images)
+
+                    image_files = [image] + auxiliary_images
+
+                if args.retrieval_order != [0,1,2,3,4]:
+                    retrieved_images = [retrieved_images[i] for i in args.retrieval_order]
+                    image_files = [image] + retrieved_images
+                elif args.retrieval_order == [0,1,2,3,4]:
+                    image_files = [image] + retrieved_images
+
                 if scenario == 'Incomplete':
                     retrieved_images = [retrieved_images[0]]
-                image_files = [image] + retrieved_images
+                    image_files = [image] + retrieved_images
     
         cur_prompt = args.extra_prompt + qs
 

@@ -47,7 +47,8 @@ if __name__ == "__main__":
         if out not in ['A', 'B', 'C', 'D']:
             #print(out)
             problem = item['prompt']
-            extraction  = extract_answer(item['output'], problem)
+            # extraction  = extract_answer(item['output'], problem)
+            extraction  = 'ask gpt'
             out = extraction
             item['extracted_output'] = extraction
             need_extra_extract.append(item)
