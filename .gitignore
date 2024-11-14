@@ -1,5 +1,5 @@
-__pycache__/*
-__pycache__
+*__pycache__/*
+*__pycache__
 
 error/*
 error
@@ -17,3 +17,5 @@ results/*
 
 results_json
 results_json/*
+
+job.sh
